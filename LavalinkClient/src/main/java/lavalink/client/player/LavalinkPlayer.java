@@ -65,7 +65,6 @@ public class LavalinkPlayer implements IPlayer {
             track.setPosition(getTrackPosition());
             playTrack(track);
         }
-
     }
 
     @Override
