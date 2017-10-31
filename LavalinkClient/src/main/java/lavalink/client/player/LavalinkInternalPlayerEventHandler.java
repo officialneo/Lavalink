@@ -34,6 +34,12 @@ class LavalinkInternalPlayerEventHandler extends PlayerEventListenerAdapter {
 
     @Override
     public void onTrackEnd(IPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        if (player.getPlayingTrack() == null) return;
+        if (track == null) {
+            log.warn("Null track was reportedly in {} with reason {}", player, endReason);
+            return;
+        }
+
         // Note: We don't trust #equals() here
         if (!player.getPlayingTrack().getInfo().identifier.equals(track.getInfo().identifier)) {
             log.info("Received an onTrackEnd event for a different track than that which the player holds.");

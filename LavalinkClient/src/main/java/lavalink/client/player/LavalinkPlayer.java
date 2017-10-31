@@ -202,9 +202,15 @@ public class LavalinkPlayer implements IPlayer {
         track = null;
     }
 
-    @SuppressWarnings("WeakerAccess")
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public Link getLink() {
         return link;
     }
 
+    @Override
+    public String toString() {
+        return "LavalinkPlayer{" +
+                "guild=" + link.getGuildId() +
+                '}';
+    }
 }
