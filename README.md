@@ -20,6 +20,7 @@ Being used in production by FredBoat, Dyno, Rythm, LewdBot, and more.
 ## Client libraries:
 ### Supports 2.x:
 * [JDA client](https://github.com/Frederikam/Lavalink/tree/master/LavalinkClient) (JDA, Java)
+* [Magma](https://github.com/initzx/magma/) (discord.py, Python)
 * [Lavalink.py](https://github.com/Devoxin/Lavalink.py) (discord.py, Python)
 * [pylava](https://github.com/Pandentia/pylava) (discord.py, Python)
 * [SandySounds](https://github.com/MrJohnCoder/SandySounds) (JavaScript)
@@ -38,6 +39,10 @@ Download from [the CI server](https://ci.fredboat.com/viewLog.html?buildId=lastS
 Put an `application.yml` file in your working directory. [Example](https://github.com/Frederikam/Lavalink/blob/master/LavalinkServer/application.yml.example)
 
 Run with `java -jar Lavalink.jar`
+
+Docker images are available on the [Docker hub](https://hub.docker.com/r/fredboat/lavalink/).
+
+[![Docker Pulls](https://img.shields.io/docker/pulls/fredboat/lavalink.svg)](https://hub.docker.com/r/fredboat/lavalink/) [![Docker layers](https://images.microbadger.com/badges/image/fredboat/lavalink:dev.svg)](https://microbadger.com/images/fredboat/lavalink:dev "Get your own image badge on microbadger.com")
 
 # Acknowledgements
 This project contains modified code from https://github.com/sedmelluq/jda-nas v1.0.5
