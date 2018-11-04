@@ -110,6 +110,24 @@ Set player volume. Volume may range from 0 to 1000. 100 is default.
 }
 ```
 
+Using the player equalizer
+```json
+{
+    "op": "equalizer",
+    "guildId": "...",
+    "bands": [
+        {
+            "band": 0,
+            "gain": 0.2
+        }
+    ]
+}
+```
+There are 15 bands (0-14) that can be changed.
+`gain` is the multiplier for the given band. The default value is 0. Valid values range from -0.25 to 1.0,
+where -0.25 means the given band is completely muted, and 0.25 means it is doubled. Modifying the gain could
+also change the volume of the output.
+
 Tell the server to potentially disconnect from the voice server and potentially remove the player with all its data.
 This is useful if you want to move to a new node for a voice connection. Calling this op does not affect voice state,
 and you can send the same VOICE_SERVER_UPDATE to a new node.
@@ -173,7 +191,7 @@ Server emitted an event. See the client implementation below.
 ```json
 {
     "op": "event",
-    ...
+    "type": "..."
 }
 ```
 
@@ -185,7 +203,7 @@ Server emitted an event. See the client implementation below.
  * 2. TrackExceptionEvent
  * 3. TrackStuckEvent
  * <p>
- * The remaining are caused by the client
+ * The remaining lavaplayer events are caused by client actions, and are therefore not forwarded via WS.
  */
 private void handleEvent(JSONObject json) throws IOException {
     LavalinkPlayer player = (LavalinkPlayer) lavalink.getPlayer(json.getString("guildId"));
@@ -220,6 +238,22 @@ private void handleEvent(JSONObject json) throws IOException {
 ```
 
 See also: [AudioTrackEndReason.java](https://github.com/sedmelluq/lavaplayer/blob/master/main/src/main/java/com/sedmelluq/discord/lavaplayer/track/AudioTrackEndReason.java)
+
+Additionally there is also the `WebSocketClosedEvent`, which signals when an audio web socket (to Discord) is closed.
+This can happen for various reasons (normal and abnormal), e.g when using an expired voice server update.
+4xxx codes are usually bad.
+See the [Discord docs](https://discordapp.com/developers/docs/topics/opcodes-and-status-codes#voice-voice-close-event-codes).
+
+```json
+{
+    "op": "event",
+    "type": "WebSocketClosedEvent",
+    "guildId": "...",
+    "code": 4006,
+    "reason": "Your session is no longer valid.",
+    "byRemote": true
+}
+```
 
 ### REST API
 The REST api is used to resolve audio tracks for use with the `play` op. 
