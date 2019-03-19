@@ -5,12 +5,6 @@ The Java client has support for JDA, but can also be adapted to work with other 
 ## Requirements
 * You must be able to send messages via a shard's mainWS connection.
 * You must be able to intercept voice server updates from mainWS on your shard connection.
-* One of the following WS drafts (all but RFC 6455 is deprecated but should work):
-    * RFC 6455
-    * Hybi 17
-    * Hybi 10
-    * Hixie 76
-    * Hixie 75
 
 ## Significant changes v2.0 -> v3.0 
 * The response of `/loadtracks` has been completely changed (again since the initial v3.0 pre-release).
@@ -52,7 +46,7 @@ User-Id: The user id of the bot you are playing music with
 ```
 
 ### Outgoing messages
-Provide an intercepted voice server update. This causes the server to connect to the voice channel
+Provide an intercepted voice server update. This causes the server to connect to the voice channel.
 ```json
 {
     "op": "voiceUpdate",
@@ -63,15 +57,21 @@ Provide an intercepted voice server update. This causes the server to connect to
 ```
 
 Cause the player to play a track.
+
 `startTime` is an optional setting that determines the number of milliseconds to offset the track by. Defaults to 0.
+
 `endTime` is an optional setting that determines at the number of milliseconds at which point the track should stop playing. Helpful if you only want to play a snippet of a bigger track. By default the track plays until it's end as per the encoded data.
+
+If `noReplace` is set to true, this operation will be ignored if a track is already playing or paused.
+
 ```json
 {
     "op": "play",
     "guildId": "...",
     "track": "...",
     "startTime": "60000",
-    "endTime": "120000"
+    "endTime": "120000",
+    "noReplace": false
 }
 ```
 
@@ -139,9 +139,8 @@ and you can send the same VOICE_SERVER_UPDATE to a new node.
 ```
 
 ### Incoming messages
-See 
-[LavalinkSocket.java](https://github.com/FredBoat/Lavalink-Client/blob/master/src/main/java/lavalink/client/io/LavalinkSocket.java)
-for client implementation
+
+See [LavalinkSocket.java](https://github.com/FredBoat/Lavalink-Client/blob/master/src/main/java/lavalink/client/io/LavalinkSocket.java) for client implementation
 
 Position information about a player. Includes unix timestamp.
 ```json
@@ -156,6 +155,7 @@ Position information about a player. Includes unix timestamp.
 ```
 
 A collection of stats sent every minute. 
+
 ```json
 {
     "op": "stats",
@@ -307,10 +307,48 @@ Additionally, in every `/loadtracks` response, a `loadType` property is returned
 * `NO_MATCHES` - Returned if no matches/sources could be found for a given identifier.
 * `LOAD_FAILED` - Returned if Lavaplayer failed to load something for some reason.
 
+All REST responses from Lavalink include a `Lavalink-Api-Version` header.
+
+### Resuming Lavalink sessions
+
+What happens after your client disconnects is dependent on whether or not the session has been configured for resuming.
+
+* If resuming is disabled all voice connections are closed immediately.
+* If resuming is enabled all music will continue playing. You will then be able to resume your session, allowing you to control the players again.
+
+To enable resuming, you must send a `configureResuming` message.
+
+* `key` is the string you will need to send when resuming the session. Set to null to disable resuming altogether. Defaults to null.
+* `timeout` is the number of seconds after disconnecting before the session is closed anyways. This is useful for avoiding accidental leaks. Defaults to `60` (seconds).
+
+```json
+{
+    "op": "configureResuming",
+    "key": "myResumeKey",
+    "timeout": 60
+}
+```
+
+To resume a session, specify the resume key in your WebSocket handshake request headers:
+
+```
+Resume-Key: The resume key of the session you want to resume.
+```
+
+You can tell if your session was resumed by looking at the handshake response header `Session-Resumed` which is either `true` or `false`:
+
+```
+Session-Resumed: true
+```
+
+When a session is paused, any events that would normally have been sent is queued up. When the session is resumed, this
+queue is then emptied and the events are then replayed. 
+
 ### Special notes
-* When your shard's mainWS connection dies, so does all your lavalink audio connections.
-    * This also includes resumes
-* When a client connection to Lavalink-Server disconnects, all connections and players for that session are shut down.
+
+* When your shard's main WS connection dies, so does all your lavalink audio connections.
+  * This also includes resumes
+
 * If Lavalink-Server suddenly dies (think SIGKILL) the client will have to terminate any audio connections by sending this event:
 ```json
 {"op":4,"d":{"self_deaf":false,"guild_id":"GUILD_ID_HERE","channel_id":null,"self_mute":false}}

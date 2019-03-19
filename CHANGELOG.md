@@ -3,6 +3,37 @@
 Each release usually includes various fixes and improvements.
 The most noteworthy of these, as well as any features and breaking changes, are listed here.
 
+## v3.2.0.3
+* Add compatibility for Java 8-10
+
+Contributor:
+[@MinnDevelopment](https://github.com/MinnDevelopment/)
+
+## v3.2.0.2
+* Patched magma
+
+Contributor:
+[@Frederikam](https://github.com/Frederikam/)
+
+## v3.2.0.1
+* Bumped to Java 11. Treating this as a patch version, as v3.2 still requires Java 11 due to a Magma update. 
+
+[@Frederikam](https://github.com/Frederikam)
+
+## v3.2
+* Added support for resuming
+* Added noReplace option to the play op
+* Sending the same voice server update will not cause an existing connection to reconnect
+
+Contributor:
+[@Frederikam](https://github.com/Frederikam)
+
+## v3.1.2
+* Add API version header to all responses
+
+Contributor:
+[@Devoxin](https://github.com/Devoxin)
+
 ## v3.1.1
 * Add equalizer support
 * Update lavaplayer to 1.3.10

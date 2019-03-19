@@ -25,7 +25,6 @@ package lavalink.server.io;
 import lavalink.server.Launcher;
 import lavalink.server.player.AudioLossCounter;
 import lavalink.server.player.Player;
-import lavalink.server.util.Ws;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +32,6 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OSProcess;
 import oshi.software.os.OperatingSystem;
-
-import java.io.IOException;
 
 public class StatsTask implements Runnable {
 
@@ -60,6 +57,8 @@ public class StatsTask implements Runnable {
     }
 
     private void sendStats() {
+        if (context.getSessionPaused()) return;
+
         JSONObject out = new JSONObject();
 
         final int[] playersTotal = {0};
@@ -90,7 +89,9 @@ public class StatsTask implements Runnable {
         JSONObject cpu = new JSONObject();
         cpu.put("cores", Runtime.getRuntime().availableProcessors());
         cpu.put("systemLoad", hal.getProcessor().getSystemCpuLoad());
-        cpu.put("lavalinkLoad", getProcessRecentCpuUsage());
+        double load = getProcessRecentCpuUsage();
+        if (!Double.isFinite(load)) load = 0;
+        cpu.put("lavalinkLoad", load);
 
         out.put("cpu", cpu);
 
@@ -119,7 +120,7 @@ public class StatsTask implements Runnable {
             out.put("frameStats", frames);
         }
 
-        Ws.send(context.getSession(), out);
+        context.send(out);
     }
 
     private double uptime = 0;
