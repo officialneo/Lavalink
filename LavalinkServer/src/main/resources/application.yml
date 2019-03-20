@@ -9,5 +9,5 @@ spring:
       discovery:
         healthCheckPath: /health
         healthCheckInterval: 15s
-        instanceId: Lavalink-${lavalink.instanceId:1}
-        tags: instanceName=${lavalink.instanceName:Common}
+        instanceId: Lavalink-${lavalink.instanceName:1}
+        tags: instanceName=${lavalink.instanceName:Lavalink}
