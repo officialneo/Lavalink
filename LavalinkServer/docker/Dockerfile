@@ -4,4 +4,4 @@ WORKDIR /opt/Lavalink
 
 COPY Lavalink.jar Lavalink.jar
 
-ENTRYPOINT exec java $JAVA_OPTS -jar JuniperBot.jar
+ENTRYPOINT exec java $JAVA_OPTS -jar Lavalink.jar
