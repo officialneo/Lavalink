@@ -29,7 +29,7 @@ public class RequestAuthorizationFilter implements HandlerInterceptor, WebMvcCon
         if (!metricsConfig.getEndpoint().isEmpty()
                 && request.getServletPath().equals(metricsConfig.getEndpoint())) return true;
 
-        if (request.getServletPath().equals("/error")) return true;
+        if (request.getServletPath().equals("/error") || request.getServletPath().equals("/health")) return true;
 
         String authorization = request.getHeader("Authorization");
 
