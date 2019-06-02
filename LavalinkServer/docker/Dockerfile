@@ -4,4 +4,4 @@ WORKDIR /opt/Lavalink
 
 COPY Lavalink.jar Lavalink.jar
 
-ENTRYPOINT ["java", "-Xmx4G", "-jar", "Lavalink.jar"]
+ENTRYPOINT exec java $JAVA_OPTS -jar Lavalink.jar

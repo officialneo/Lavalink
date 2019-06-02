@@ -27,6 +27,7 @@ allprojects {
         jcenter()                          // JDA and some other stuff
         mavenLocal()                       // useful for developing
         maven { url "https://jitpack.io" } // build projects directly from github
+        maven { url "https://dl.bintray.com/goldrenard/maven" }
     }
 
     group = 'lavalink'
@@ -35,6 +36,7 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
+    apply plugin: 'io.spring.dependency-management'
     if (project.hasProperty("includeAnalysis")) {
         project.logger.lifecycle("applying analysis plugins")
         apply from: "../analysis.gradle"
@@ -52,11 +54,14 @@ subprojects {
         //@formatter:off
 
         lavaplayerVersion               = '1.3.17'
+        jbLavaplayerVersion             = '1.3.17.7'
         magmaVersion                    = '0.9.0'
         jdaNasVersion                   = '1.0.6'
         jappVersion                     = '1.3'
 
         springBootVersion               = "${springBootVersion}"
+        springCloudVersion              = 'Finchley.RELEASE'
+        springCloudConsulVersion        = '2.0.2.RELEASE'
         springWebSocketVersion          = '5.0.8.RELEASE'
         logbackVersion                  = '1.2.3'
         sentryLogbackVersion            = '1.7.7'

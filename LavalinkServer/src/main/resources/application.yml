@@ -3,3 +3,11 @@ spring:
     version: "1.0"
     formatted-version: "(v1.0)"
     name: "Lavalink"
+  cloud:
+    consul:
+      enabled: false
+      discovery:
+        healthCheckPath: /health
+        healthCheckInterval: 15s
+        instanceId: Lavalink-${lavalink.instanceName:1}
+        tags: instanceName=${lavalink.instanceName:Lavalink}
