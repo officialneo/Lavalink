@@ -30,11 +30,12 @@ package:
   stage: package
   script:
   - cd ./LavalinkServer/docker
-  - docker build -t registry.gitlab.com/juniperbot/lavalink -t registry.gitlab.com/juniperbot/lavalink:$CI_PIPELINE_IID .
+  - docker build -t registry.gitlab.com/juniperbot/lavalink:$CI_COMMIT_REF_NAME -t registry.gitlab.com/juniperbot/lavalink:$CI_PIPELINE_IID .
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-  - docker push registry.gitlab.com/juniperbot/lavalink
+  - docker push registry.gitlab.com/juniperbot/lavalink:$CI_COMMIT_REF_NAME
   - docker push registry.gitlab.com/juniperbot/lavalink:$CI_PIPELINE_IID
   dependencies:
   - build
   only:
-  - master
+  - master-jb
+  - dev-jb
