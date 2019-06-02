@@ -51,8 +51,8 @@ public class StatsTask implements Runnable {
     public void run() {
         try {
             sendStats();
-        } catch (Exception e) {
-            log.error("Exception while sending stats", e);
+        } catch (Throwable e) {
+            log.error("An error while sending stats", e);
         }
     }
 

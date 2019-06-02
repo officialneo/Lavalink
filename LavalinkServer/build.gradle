@@ -60,6 +60,10 @@ dependencies {
     compile group: 'io.prometheus', name: 'simpleclient_logback', version: prometheusVersion
     compile group: 'io.prometheus', name: 'simpleclient_servlet', version: prometheusVersion
 
+    // Force JNA version due to oldest definitions in Spring BOM's
+    compile group: 'net.java.dev.jna', name: 'jna', version: jnaVersion
+    compile group: 'net.java.dev.jna', name: 'jna-platform', version: jnaVersion
+
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
 }
 
