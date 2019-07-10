@@ -71,6 +71,7 @@ public class AudioLoaderRestHandler {
                 .put("identifier", trackInfo.identifier)
                 .put("uri", trackInfo.uri)
                 .put("isStream", trackInfo.isStream)
+                .put("artworkUri", trackInfo.artworkUri)
                 .put("isSeekable", audioTrack.isSeekable())
                 .put("position", audioTrack.getPosition());
     }
