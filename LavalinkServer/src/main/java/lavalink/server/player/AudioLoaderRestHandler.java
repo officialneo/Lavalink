@@ -27,6 +27,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.server.config.ServerConfig;
 import lavalink.server.util.Util;
+import org.apache.commons.collections.MapUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -64,6 +65,11 @@ public class AudioLoaderRestHandler {
     private JSONObject trackToJSON(AudioTrack audioTrack) {
         AudioTrackInfo trackInfo = audioTrack.getInfo();
 
+        JSONObject metadata = new JSONObject();
+        if (MapUtils.isNotEmpty(trackInfo.metadata)) {
+            trackInfo.metadata.forEach(metadata::put);
+        }
+
         return new JSONObject()
                 .put("title", trackInfo.title)
                 .put("author", trackInfo.author)
@@ -71,9 +77,9 @@ public class AudioLoaderRestHandler {
                 .put("identifier", trackInfo.identifier)
                 .put("uri", trackInfo.uri)
                 .put("isStream", trackInfo.isStream)
-                .put("artworkUri", trackInfo.artworkUri)
                 .put("isSeekable", audioTrack.isSeekable())
-                .put("position", audioTrack.getPosition());
+                .put("position", audioTrack.getPosition())
+                .put("metadata", metadata);
     }
 
     private JSONObject encodeLoadResult(LoadResult result) {
