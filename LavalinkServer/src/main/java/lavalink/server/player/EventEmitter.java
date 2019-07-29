@@ -77,6 +77,12 @@ public class EventEmitter extends AudioEventAdapter {
             out.put("track", JSONObject.NULL);
         }
 
+        JSONObject exceptionInfo = new JSONObject();
+        exceptionInfo.put("message", exception.getMessage());
+        exceptionInfo.put("severity", (exception.severity != null ? exception.severity : FriendlyException.Severity.COMMON).name());
+        exceptionInfo.put("cause", exception.getCause() != null ? exception.getCause().getMessage() : exception.getMessage());
+
+        out.put("exception", exceptionInfo);
         out.put("error", exception.getMessage());
 
         linkPlayer.getSocket().send(out);
