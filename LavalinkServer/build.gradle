@@ -78,7 +78,7 @@ processResources {
                 "project.version"   : project.version,
                 "project.groupId"   : project.group,
                 "project.artifactId": project.ext.moduleName,
-                "env.BUILD_NUMBER"  : (System.getenv('CI_PIPELINE_IID') ? System.getenv('CI_PIPELINE_IID') : 'DEV'),
+                "env.BUILD_NUMBER"  : (System.getenv('CI_PIPELINE_IID') ? System.getenv('CI_PIPELINE_IID') : 'Unofficial'),
                 "env.BUILD_TIME"    : System.currentTimeMillis() + ''
         ]
     }
