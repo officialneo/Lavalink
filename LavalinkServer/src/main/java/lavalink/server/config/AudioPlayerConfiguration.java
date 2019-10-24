@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.yamusic.YandexMusicAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,7 @@ public class AudioPlayerConfiguration {
             if (sources.isTwitch()) audioPlayerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
             if (sources.isVimeo()) audioPlayerManager.registerSourceManager(new VimeoAudioSourceManager());
             if (sources.isMixer()) audioPlayerManager.registerSourceManager(new BeamAudioSourceManager());
+            if (sources.isYandex()) audioPlayerManager.registerSourceManager(new YandexMusicAudioSourceManager());
             if (sources.isHttp()) audioPlayerManager.registerSourceManager(new HttpAudioSourceManager());
             if (sources.isLocal()) audioPlayerManager.registerSourceManager(new LocalAudioSourceManager());
 
