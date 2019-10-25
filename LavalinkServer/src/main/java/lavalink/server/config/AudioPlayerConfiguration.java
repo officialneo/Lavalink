@@ -11,6 +11,8 @@ import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceMan
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.yamusic.YandexMusicAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +45,16 @@ public class AudioPlayerConfiguration {
             if (sources.isTwitch()) audioPlayerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
             if (sources.isVimeo()) audioPlayerManager.registerSourceManager(new VimeoAudioSourceManager());
             if (sources.isMixer()) audioPlayerManager.registerSourceManager(new BeamAudioSourceManager());
-            if (sources.isYandex()) audioPlayerManager.registerSourceManager(new YandexMusicAudioSourceManager());
+            YandexMusicConfig yandex = sources.getYandex();
+            if (yandex.isEnabled()) {
+                YandexMusicAudioSourceManager sourceManager = new YandexMusicAudioSourceManager();
+                if (StringUtils.isNotEmpty(yandex.getProxyHost())) {
+                    sourceManager.configureApiBuilder(builder -> {
+                        builder.setProxy(new HttpHost(yandex.getProxyHost(), yandex.getProxyPort()));
+                    });
+                }
+                audioPlayerManager.registerSourceManager(sourceManager);
+            }
             if (sources.isHttp()) audioPlayerManager.registerSourceManager(new HttpAudioSourceManager());
             if (sources.isLocal()) audioPlayerManager.registerSourceManager(new LocalAudioSourceManager());
 

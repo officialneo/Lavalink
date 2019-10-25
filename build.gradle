@@ -55,7 +55,7 @@ subprojects {
         //@formatter:off
 
         lavaplayerVersion               = '1.3.22'
-        jbLavaplayerVersion             = '1.3.22.22'
+        jbLavaplayerVersion             = '1.3.22.24'
         magmaVersion                    = '0.12.3'
         jdaNasVersion                   = '1.1.0'
         jappVersion                     = '1.3.2-MINN'
