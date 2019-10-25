@@ -15,7 +15,7 @@ public class AudioSourcesConfig {
     private boolean soundcloud = true;
     private boolean twitch = true;
     private boolean vimeo = true;
-    private boolean yandex = true;
+    private YandexMusicConfig yandex = new YandexMusicConfig();
     private boolean mixer = true;
     private boolean http = true;
     private boolean local = false;
@@ -68,11 +68,11 @@ public class AudioSourcesConfig {
         this.mixer = mixer;
     }
 
-    public boolean isYandex() {
+    public YandexMusicConfig getYandex() {
         return yandex;
     }
 
-    public void setYandex(boolean yandex) {
+    public void setYandex(YandexMusicConfig yandex) {
         this.yandex = yandex;
     }
 
