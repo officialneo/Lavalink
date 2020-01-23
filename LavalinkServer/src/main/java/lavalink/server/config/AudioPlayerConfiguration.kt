@@ -14,6 +14,7 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
+import com.sedmelluq.discord.lavaplayer.source.yamusic.YandexMusicAudioSourceManager
 import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotator
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner
 import com.sedmelluq.lava.extensions.youtuberotator.planner.BalancingIpRoutePlanner
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Configuration
 import java.net.InetAddress
 import java.util.function.Predicate
 import java.util.function.Supplier
+import org.apache.http.HttpHost
 
 /**
  * Created by napster on 05.03.18.
@@ -71,6 +73,15 @@ class AudioPlayerConfiguration {
         if (sources.isTwitch) audioPlayerManager.registerSourceManager(TwitchStreamAudioSourceManager())
         if (sources.isVimeo) audioPlayerManager.registerSourceManager(VimeoAudioSourceManager())
         if (sources.isMixer) audioPlayerManager.registerSourceManager(BeamAudioSourceManager())
+
+        val yandex = sources.yandex
+        if (yandex.isEnabled) {
+            val sourceManager = YandexMusicAudioSourceManager()
+            if (yandex.proxyHost.isNotBlank()) {
+                sourceManager.configureApiBuilder { builder -> builder.setProxy(HttpHost(yandex.proxyHost, yandex.proxyPort)) }
+            }
+            audioPlayerManager.registerSourceManager(sourceManager)
+        }
         if (sources.isHttp) audioPlayerManager.registerSourceManager(HttpAudioSourceManager())
         if (sources.isLocal) audioPlayerManager.registerSourceManager(LocalAudioSourceManager())
 
