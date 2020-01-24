@@ -30,8 +30,10 @@ class YouTubeApiPlaylistLoader(val youTubeService: YouTubeService,
                 val firstPage = youTubeService.getPlaylistPageById(playlistId, null, true)
                         ?: throw FriendlyException("This playlist does not exist", COMMON, null)
                 return buildPlaylist(firstPage, playlistId, selectedVideoId, trackFactory)
+            } catch (e: FriendlyException) {
+                throw e // pass it next
             } catch (e: Exception) {
-                YouTubeApiSearchProvider.log.warn("Can't search YouTube API", e)
+                log.warn("Can't search YouTube API", e)
             }
         }
         return super.load(httpInterface, playlistId, selectedVideoId, trackFactory)
