@@ -3,6 +3,7 @@ package lavalink.server.cache
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.youtube.YouTube
+import com.google.api.services.youtube.model.PlaylistItem
 import com.google.api.services.youtube.model.SearchResult
 import com.google.api.services.youtube.model.Video
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
@@ -11,23 +12,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.lang.IllegalStateException
 import java.time.Duration
 import javax.annotation.PostConstruct
-import com.google.api.services.youtube.model.Playlist
-import java.util.ArrayList
-import org.bouncycastle.asn1.x500.style.RFC4519Style.title
-import com.google.api.services.youtube.model.PlaylistItem
-import java.util.stream.Collectors
-import java.io.IOException
-
-
-
-
-
-
-
-
 
 
 @Service
@@ -87,7 +73,8 @@ class YouTubeServiceImpl : YouTubeService {
         return if (result.isNotEmpty()) result[0].snippet.title else null
     }
 
-    override fun getPlaylistPageById(id: String, cursor: String?, withName: Boolean): YouTubePlaylistInfo? {
+    override fun getPlaylistPageById(id: String, cursor: String?, withName: Boolean,
+                                     itemFactory: (String) -> AudioTrackInfo?): YouTubePlaylistInfo? {
         val name = (if (withName) getPlaylistName(id) else "") ?: return null
         val response = youTube.playlistItems()
                 .list("snippet,contentDetails")
@@ -100,7 +87,7 @@ class YouTubeServiceImpl : YouTubeService {
         if (items.isEmpty()) {
             return YouTubePlaylistInfo(id, name, null, listOf())
         }
-        val tracks = items.map { playListItemToTrackInfo(it)!! }
+        val tracks = items.map { playListItemToTrackInfo(it, itemFactory)!! }
         return YouTubePlaylistInfo(id, name, response.nextPageToken, tracks)
     }
 
@@ -134,9 +121,10 @@ class YouTubeServiceImpl : YouTubeService {
         )
     }
 
-    fun playListItemToTrackInfo(playlistItem: PlaylistItem): AudioTrackInfo? {
+    fun playListItemToTrackInfo(playlistItem: PlaylistItem,
+                                itemFactory: (String) -> AudioTrackInfo?): AudioTrackInfo? {
         val videoId = playlistItem.contentDetails.videoId
-        return getTrackInfoById(videoId)
+        return itemFactory(videoId) ?: getTrackInfoById(videoId)
     }
 
     private fun buildVideoList(videoIds: String): YouTube.Videos.List {

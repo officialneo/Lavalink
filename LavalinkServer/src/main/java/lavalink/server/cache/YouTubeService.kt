@@ -18,7 +18,8 @@ interface YouTubeService {
 
     fun searchTrackInfo(query: String): AudioTrackInfo?
 
-    fun getPlaylistPageById(id: String, cursor: String?, withName: Boolean): YouTubePlaylistInfo?
+    fun getPlaylistPageById(id: String, cursor: String?, withName: Boolean,
+                            itemFactory: (String) -> AudioTrackInfo?): YouTubePlaylistInfo?
 
     fun getPlaylistName(id: String): String?
 }

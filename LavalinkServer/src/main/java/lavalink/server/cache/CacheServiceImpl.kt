@@ -2,10 +2,13 @@ package lavalink.server.cache
 
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo
+import com.sedmelluq.discord.lavaplayer.track.info.AudioTrackInfoBuilder
 import net.notfab.caching.client.CacheClient
+import net.notfab.caching.shared.Track
+import net.notfab.caching.shared.YoutubeTrack
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.concurrent.Executors
@@ -31,19 +34,38 @@ class CacheServiceImpl : CacheService {
     }
 
     override fun getTrackById(id: String, sourceManager: AudioSourceManager): AudioTrack? {
+        val info = getTrackInfoById(id) ?: return null
+        return toTrack(sourceManager, info)
+    }
+
+    override fun getTrackInfoById(id: String): AudioTrackInfo? {
         val response = get(id)
         if (response == null || response.failure || response.track == null) {
             return null
         }
-        return convertTrack(sourceManager, response.track.toAudioTrack(sourceManager))
+        val info = AudioTrackInfoBuilder.empty()
+                .setTitle(response.track.title)
+                .setAuthor(response.track.author)
+                .setLength(response.track.length)
+                .setIdentifier(response.track.id)
+                .setIsStream(response.track.isStream)
+                .setUri(response.track.toURL())
+                .build()
+        return convertTrackInfo(response.track, info)
     }
 
-    private fun convertTrack(sourceManager: AudioSourceManager, track: AudioTrack): AudioTrack {
-        if (track is YoutubeAudioTrack) {
-            track.info.metadata["artworkUrl"] = "https://img.youtube.com/vi/${track.info.identifier}/0.jpg"
-            return CachedYouTubeAudioTrack(track, sourceManager as YoutubeAudioSourceManager)
+    private fun convertTrackInfo(track: Track, trackInfo: AudioTrackInfo): AudioTrackInfo {
+        if (track is YoutubeTrack) {
+            trackInfo.metadata["artworkUrl"] = "https://img.youtube.com/vi/${trackInfo.identifier}/0.jpg"
         }
-        return track
+        return trackInfo
+    }
+
+    private fun toTrack(sourceManager: AudioSourceManager, trackInfo: AudioTrackInfo): AudioTrack? {
+        if (sourceManager is YoutubeAudioSourceManager) {
+            return CachedYouTubeAudioTrack(trackInfo, sourceManager)
+        }
+        return null
     }
 
     override fun get(id: String) = if (client != null) client!![id] else null

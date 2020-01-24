@@ -15,7 +15,7 @@ class CachedYouTubeAudioSourceManager(allowSearch: Boolean,
         DefaultYoutubeTrackDetailsLoader(),
         YouTubeApiSearchProvider(youTubeService, cacheConfig),
         YoutubeSignatureCipherManager(),
-        YouTubeApiPlaylistLoader(youTubeService, cacheConfig),
+        YouTubeApiPlaylistLoader(youTubeService, cacheService, cacheConfig),
         DefaultYoutubeLinkRouter()
 ) {
 

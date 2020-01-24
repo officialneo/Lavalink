@@ -13,6 +13,7 @@ import java.util.function.Function
 
 
 class YouTubeApiPlaylistLoader(val youTubeService: YouTubeService,
+                               val cacheService: CacheService,
                                val cacheConfig: CacheConfig) : DefaultYoutubePlaylistLoader() {
 
     companion object {
@@ -27,7 +28,7 @@ class YouTubeApiPlaylistLoader(val youTubeService: YouTubeService,
                       trackFactory: Function<AudioTrackInfo, AudioTrack>): AudioPlaylist {
         if (cacheConfig.isYouTubeApiEnabled) {
             try {
-                val firstPage = youTubeService.getPlaylistPageById(playlistId, null, true)
+                val firstPage = youTubeService.getPlaylistPageById(playlistId, null, true, ::getInfoFromCache)
                         ?: throw FriendlyException("This playlist does not exist", COMMON, null)
                 return buildPlaylist(firstPage, playlistId, selectedVideoId, trackFactory)
             } catch (e: FriendlyException) {
@@ -64,6 +65,10 @@ class YouTubeApiPlaylistLoader(val youTubeService: YouTubeService,
         )
     }
 
+    private fun getInfoFromCache(videoId: String): AudioTrackInfo? {
+        return this.cacheService.getTrackInfoById(videoId) ?: return null
+    }
+
     private fun getSelectedTrack(selectedVideoId: String?, tracks: List<AudioTrack>): AudioTrack? {
         if (selectedVideoId == null) {
             return null
@@ -80,7 +85,7 @@ class YouTubeApiPlaylistLoader(val youTubeService: YouTubeService,
                               playlistId: String,
                               trackFactory: Function<AudioTrackInfo, AudioTrack>,
                               tracks: MutableList<AudioTrack>): String? {
-        val page = youTubeService.getPlaylistPageById(playlistId, cursor, false) ?: return null
+        val page = youTubeService.getPlaylistPageById(playlistId, cursor, false, ::getInfoFromCache) ?: return null
         page.tracks.map { trackFactory.apply(it) }.forEach { tracks.add(it) }
         return page.cursor
     }
