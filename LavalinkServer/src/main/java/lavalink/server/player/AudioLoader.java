@@ -27,6 +27,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import lavalink.server.cache.CacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +45,14 @@ public class AudioLoader implements AudioLoadResultHandler {
             null, null);
 
     private final AudioPlayerManager audioPlayerManager;
+    private final CacheService cacheService;
 
     private final CompletableFuture<LoadResult> loadResult = new CompletableFuture<>();
     private final AtomicBoolean used = new AtomicBoolean(false);
 
-    public AudioLoader(AudioPlayerManager audioPlayerManager) {
+    public AudioLoader(AudioPlayerManager audioPlayerManager, CacheService cacheService) {
         this.audioPlayerManager = audioPlayerManager;
+        this.cacheService = cacheService;
     }
 
     public CompletionStage<LoadResult> load(String identifier) {
@@ -69,6 +72,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         log.info("Loaded track " + audioTrack.getInfo().title);
         ArrayList<AudioTrack> result = new ArrayList<>();
         result.add(audioTrack);
+        this.cacheService.addToIndex(audioTrack);
         this.loadResult.complete(new LoadResult(ResultStatus.TRACK_LOADED, result, null, null));
     }
 
@@ -86,6 +90,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         ResultStatus status = audioPlaylist.isSearchResult() ? ResultStatus.SEARCH_RESULT : ResultStatus.PLAYLIST_LOADED;
         List<AudioTrack> loadedItems = audioPlaylist.getTracks();
 
+        this.cacheService.addToIndex(audioPlaylist);
         this.loadResult.complete(new LoadResult(status, loadedItems, playlistName, selectedTrack));
     }
 

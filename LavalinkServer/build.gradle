@@ -41,6 +41,8 @@ dependencies {
     compile group: 'com.sedmelluq', name: 'jda-nas', version: jdaNasVersion 
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlinVersion
 
+    compile group: 'com.google.apis', name: 'google-api-services-youtube', version: youTubeApiVersion
+    compile group: "net.notfab.cache", name: 'cache-client', version: cacheVersion
     compile group: 'com.github.shredder121', name: 'jda-async-packetprovider', version: jappVersion
     //required by japp
     compile group: 'org.apache.commons', name: 'commons-lang3', version: commonsLangVersion

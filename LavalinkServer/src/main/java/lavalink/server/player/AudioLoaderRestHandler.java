@@ -25,6 +25,7 @@ package lavalink.server.player;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import lavalink.server.cache.CacheService;
 import lavalink.server.config.ServerConfig;
 import lavalink.server.util.Util;
 import org.apache.commons.collections.MapUtils;
@@ -51,10 +52,14 @@ public class AudioLoaderRestHandler {
     private static final Logger log = LoggerFactory.getLogger(AudioLoaderRestHandler.class);
     private final AudioPlayerManager audioPlayerManager;
     private final ServerConfig serverConfig;
+    private final CacheService cacheService;
 
-    public AudioLoaderRestHandler(AudioPlayerManager audioPlayerManager, ServerConfig serverConfig) {
+    public AudioLoaderRestHandler(AudioPlayerManager audioPlayerManager,
+                                  ServerConfig serverConfig,
+                                  CacheService cacheService) {
         this.audioPlayerManager = audioPlayerManager;
         this.serverConfig = serverConfig;
+        this.cacheService = cacheService;
     }
 
     private void log(HttpServletRequest request) {
@@ -125,7 +130,7 @@ public class AudioLoaderRestHandler {
 
         log(request);
 
-        return new AudioLoader(audioPlayerManager).load(identifier)
+        return new AudioLoader(audioPlayerManager, cacheService).load(identifier)
                 .thenApply(this::encodeLoadResult)
                 .thenApply(loadResultJson -> new ResponseEntity<>(loadResultJson.toString(), HttpStatus.OK));
     }
