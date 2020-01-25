@@ -43,6 +43,7 @@ dependencies {
 
     compile group: 'com.google.apis', name: 'google-api-services-youtube', version: youTubeApiVersion
     compile group: "net.notfab.cache", name: 'cache-client', version: cacheVersion
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: okhttp3Version
     compile group: 'com.github.shredder121', name: 'jda-async-packetprovider', version: jappVersion
     //required by japp
     compile group: 'org.apache.commons', name: 'commons-lang3', version: commonsLangVersion
