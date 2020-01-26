@@ -10,7 +10,7 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.*
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.yamusic.YandexMusicAudioSourceManager
-import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotator
+import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup
 import com.sedmelluq.lava.extensions.youtuberotator.planner.*
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv4Block
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv6Block
@@ -18,6 +18,7 @@ import lavalink.server.cache.CacheConfig
 import lavalink.server.cache.CacheService
 import lavalink.server.cache.CachedYouTubeAudioSourceManager
 import lavalink.server.cache.YouTubeService
+import lavalink.server.util.RotatingIpv4RoutePlanner
 import org.apache.http.HttpHost
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
@@ -53,7 +54,7 @@ class AudioPlayerConfiguration {
                     cacheConfig,
                     youTubeService)
             if (routePlanner != null) {
-                YoutubeIpRotator.setup(youtube, routePlanner)
+                YoutubeIpRotatorSetup(routePlanner).forSource(youtube).setup()
             }
             val playlistLoadLimit = serverConfig.youtubePlaylistLoadLimit
             if (playlistLoadLimit != null) youtube.setPlaylistPageCount(playlistLoadLimit)
@@ -125,6 +126,7 @@ class AudioPlayerConfiguration {
 
         return when (rateLimitConfig.strategy.toLowerCase().trim()) {
             "rotateonban" -> RotatingIpRoutePlanner(ipBlocks, filter, rateLimitConfig.searchTriggersFail)
+            "rotateonbanipv4_32" -> RotatingIpv4RoutePlanner(ipBlocks, filter, rateLimitConfig.searchTriggersFail)
             "loadbalance" -> BalancingIpRoutePlanner(ipBlocks, filter, rateLimitConfig.searchTriggersFail)
             "nanoswitch" -> NanoIpRoutePlanner(ipBlocks, rateLimitConfig.searchTriggersFail)
             "rotatingnanoswitch" -> RotatingNanoIpRoutePlanner(ipBlocks, filter, rateLimitConfig.searchTriggersFail)

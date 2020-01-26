@@ -4,6 +4,7 @@ import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner
 import com.sedmelluq.lava.extensions.youtuberotator.planner.NanoIpRoutePlanner
 import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingIpRoutePlanner
 import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingNanoIpRoutePlanner
+import lavalink.server.util.RotatingIpv4RoutePlanner
 import org.json.JSONObject
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -77,6 +78,13 @@ class RoutePlannerRestHandler(private val routePlanner: AbstractRoutePlanner?) {
                     ipBlockStatus,
                     failingAddressesStatus,
                     planner.rotateIndex.toString(),
+                    planner.index.toString(),
+                    planner.currentAddress.toString()
+            )
+            is RotatingIpv4RoutePlanner -> RotatingIpRoutePlannerStatus(
+                    ipBlockStatus,
+                    failingAddressesStatus,
+                    planner.index.toString(),
                     planner.index.toString(),
                     planner.currentAddress.toString()
             )
