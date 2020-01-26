@@ -1,7 +1,6 @@
 package lavalink.server.util;
 
 import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
-import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingIpRoutePlanner;
 import com.sedmelluq.lava.extensions.youtuberotator.tools.Tuple;
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.IpBlock;
 import org.apache.http.HttpException;
@@ -19,7 +18,7 @@ import java.util.function.Predicate;
 
 public class RotatingIpv4RoutePlanner extends AbstractRoutePlanner {
 
-    private static final Logger log = LoggerFactory.getLogger(RotatingIpRoutePlanner.class);
+    private static final Logger log = LoggerFactory.getLogger(RotatingIpv4RoutePlanner.class);
     private final Predicate<InetAddress> ipFilter;
     private final AtomicBoolean next;
     private final AtomicReference<BigInteger> index;
@@ -90,7 +89,7 @@ public class RotatingIpv4RoutePlanner extends AbstractRoutePlanner {
         }
 
         if (currentAddress == null) {
-            currentAddress = extractLocalAddress();
+            currentAddress = ipBlocks.get(index.get().intValue()).getAddressAtIndex(0);
         }
         next.set(false);
         return new Tuple<>(currentAddress, remoteAddress);
