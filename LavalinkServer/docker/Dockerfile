@@ -9,4 +9,4 @@ WORKDIR /opt/Lavalink
 
 COPY Lavalink.jar Lavalink.jar
 
-ENTRYPOINT exec java $JAVA_OPTS -jar Lavalink.jar
+ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar Lavalink.jar
