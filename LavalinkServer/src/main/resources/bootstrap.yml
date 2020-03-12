@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: common,${LAVALINK_NODE_CONFIG_NAME:node}
+  application:
+    name: "Lavalink"
+  cloud:
+    config:
+      fail-fast: true
