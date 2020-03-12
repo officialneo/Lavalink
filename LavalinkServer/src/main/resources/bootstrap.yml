@@ -5,4 +5,5 @@ spring:
     name: "Lavalink"
   cloud:
     config:
-      fail-fast: true
+      enabled: false
+      fail-fast: false
