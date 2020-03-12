@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: common,${LAVALINK_NODE_CONFIG_NAME:node}
+    active: common,${lavalink.instanceName:Lavalink}
   application:
     name: "Lavalink"
   cloud:
