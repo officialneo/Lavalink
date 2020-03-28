@@ -41,7 +41,7 @@ class AudioPlayerConfiguration {
                                    cacheConfig: CacheConfig,
                                    cacheService: CacheService,
                                    youTubeService: YouTubeService,
-                                   routePlanner: AbstractRoutePlanner?) = Supplier<AudioPlayerManager> {
+                                   routePlanner: AbstractRoutePlanner?): AudioPlayerManager {
         val audioPlayerManager = DefaultAudioPlayerManager()
 
         if (serverConfig.isGcWarnings) {
@@ -54,7 +54,15 @@ class AudioPlayerConfiguration {
                     cacheConfig,
                     youTubeService)
             if (routePlanner != null) {
-                YoutubeIpRotatorSetup(routePlanner).forSource(youtube).setup()
+                var retryLimit = serverConfig.ratelimit?.retryLimit ?: -1
+                if (retryLimit == 0) {
+                    retryLimit = Int.MAX_VALUE
+                }
+                val builder = YoutubeIpRotatorSetup(routePlanner).forSource(youtube)
+                if (retryLimit > 0) {
+                    builder.withRetryLimit(retryLimit)
+                }
+                builder.setup()
             }
             val playlistLoadLimit = serverConfig.youtubePlaylistLoadLimit
             if (playlistLoadLimit != null) youtube.setPlaylistPageCount(playlistLoadLimit)
@@ -91,12 +99,7 @@ class AudioPlayerConfiguration {
 
         audioPlayerManager.configuration.isFilterHotSwapEnabled = true
 
-        audioPlayerManager
-    }
-
-    @Bean
-    fun restAudioPlayerManager(supplier: Supplier<AudioPlayerManager>): AudioPlayerManager {
-        return supplier.get()
+        return audioPlayerManager
     }
 
     @Bean
