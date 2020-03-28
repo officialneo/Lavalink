@@ -41,7 +41,7 @@ class AudioPlayerConfiguration {
                                    cacheConfig: CacheConfig,
                                    cacheService: CacheService,
                                    youTubeService: YouTubeService,
-                                   routePlanner: AbstractRoutePlanner?) = Supplier<AudioPlayerManager> {
+                                   routePlanner: AbstractRoutePlanner?): AudioPlayerManager {
         val audioPlayerManager = DefaultAudioPlayerManager()
 
         if (serverConfig.isGcWarnings) {
@@ -91,12 +91,7 @@ class AudioPlayerConfiguration {
 
         audioPlayerManager.configuration.isFilterHotSwapEnabled = true
 
-        audioPlayerManager
-    }
-
-    @Bean
-    fun restAudioPlayerManager(supplier: Supplier<AudioPlayerManager>): AudioPlayerManager {
-        return supplier.get()
+        return audioPlayerManager
     }
 
     @Bean
