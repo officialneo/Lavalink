@@ -18,14 +18,12 @@ import lavalink.server.cache.CacheConfig
 import lavalink.server.cache.CacheService
 import lavalink.server.cache.CachedYouTubeAudioSourceManager
 import lavalink.server.cache.YouTubeService
-import lavalink.server.metrics.PrometheusMetrics
 import lavalink.server.util.RotatingIpv4RoutePlanner
 import org.apache.http.HttpHost
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.net.InetAddress
-import java.util.*
 import java.util.function.Predicate
 
 /**
@@ -42,8 +40,7 @@ class AudioPlayerConfiguration {
                                    cacheConfig: CacheConfig,
                                    cacheService: CacheService,
                                    youTubeService: YouTubeService,
-                                   routePlanner: AbstractRoutePlanner?,
-                                   metrics: Optional<PrometheusMetrics>): AudioPlayerManager {
+                                   routePlanner: AbstractRoutePlanner?): AudioPlayerManager {
         val audioPlayerManager = DefaultAudioPlayerManager()
 
         if (serverConfig.isGcWarnings) {
@@ -100,8 +97,6 @@ class AudioPlayerConfiguration {
         if (sources.isLocal) audioPlayerManager.registerSourceManager(LocalAudioSourceManager())
 
         audioPlayerManager.configuration.isFilterHotSwapEnabled = true
-
-        metrics.ifPresent { it.registerAudioManager(audioPlayerManager) }
 
         return audioPlayerManager
     }

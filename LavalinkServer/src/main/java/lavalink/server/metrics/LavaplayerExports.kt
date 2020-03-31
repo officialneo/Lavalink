@@ -1,12 +1,12 @@
 package lavalink.server.metrics
 
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
 import io.prometheus.client.Collector
 import io.prometheus.client.GaugeMetricFamily
 import java.util.*
 import java.util.concurrent.ThreadPoolExecutor
 
-class LavaplayerExports(private val playerManager: DefaultAudioPlayerManager) : Collector() {
+class LavaplayerExports(private val playerManager: AudioPlayerManager) : Collector() {
 
     override fun collect(): List<MetricFamilySamples> {
         val samples = ArrayList<MetricFamilySamples>()

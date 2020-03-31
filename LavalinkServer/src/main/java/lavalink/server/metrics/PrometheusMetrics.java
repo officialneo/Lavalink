@@ -1,12 +1,13 @@
 package lavalink.server.metrics;
 
 import ch.qos.logback.classic.LoggerContext;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import io.prometheus.client.hotspot.DefaultExports;
 import io.prometheus.client.logback.InstrumentedAppender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.management.NotificationEmitter;
@@ -22,7 +23,7 @@ public class PrometheusMetrics {
 
     private static final Logger log = LoggerFactory.getLogger(PrometheusMetrics.class);
 
-    public PrometheusMetrics() {
+    public PrometheusMetrics(ApplicationContext context, AudioPlayerManager playerManager) {
 
         InstrumentedAppender prometheusAppender = new InstrumentedAppender();
         //log metrics
@@ -35,6 +36,12 @@ public class PrometheusMetrics {
         //jvm (hotspot) metrics
         DefaultExports.initialize();
 
+        // lavaplayer-related metrics
+        new LavaplayerExports(playerManager).register();
+
+        // node-related metrics
+        new NodeInfoExports(context).register();
+
         //gc pause buckets
         final GcNotificationListener gcNotificationListener = new GcNotificationListener();
         for (GarbageCollectorMXBean gcBean : ManagementFactory.getGarbageCollectorMXBeans()) {
@@ -44,9 +51,5 @@ public class PrometheusMetrics {
         }
 
         log.info("Prometheus metrics set up");
-    }
-
-    public void registerAudioManager(DefaultAudioPlayerManager manager) {
-        new LavaplayerExports(manager).register();
     }
 }
