@@ -1,6 +1,7 @@
 package lavalink.server.metrics;
 
 import ch.qos.logback.classic.LoggerContext;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import io.prometheus.client.hotspot.DefaultExports;
 import io.prometheus.client.logback.InstrumentedAppender;
 import org.slf4j.Logger;
@@ -43,5 +44,9 @@ public class PrometheusMetrics {
         }
 
         log.info("Prometheus metrics set up");
+    }
+
+    public void registerAudioManager(DefaultAudioPlayerManager manager) {
+        new LavaplayerExports(manager).register();
     }
 }
