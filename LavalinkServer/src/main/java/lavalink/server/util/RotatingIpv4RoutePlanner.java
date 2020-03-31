@@ -61,9 +61,7 @@ public class RotatingIpv4RoutePlanner extends AbstractRoutePlanner {
     }
 
     public InetAddress getCurrentAddress() {
-        if (index.get().compareTo(BigInteger.ZERO) == 0)
-            return null;
-        return ipBlock.getAddressAtIndex(index.get().subtract(BigInteger.ONE));
+        return ipBlocks.get(index.get().intValue()).getAddressAtIndex(0);
     }
 
     public BigInteger getIndex() {
