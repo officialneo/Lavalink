@@ -2,6 +2,7 @@ package lavalink.server.metrics;
 
 import ch.qos.logback.classic.LoggerContext;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner;
 import io.prometheus.client.hotspot.DefaultExports;
 import io.prometheus.client.logback.InstrumentedAppender;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.management.NotificationEmitter;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
+import java.util.Optional;
 
 /**
  * Created by napster on 08.05.18.
@@ -23,7 +25,9 @@ public class PrometheusMetrics {
 
     private static final Logger log = LoggerFactory.getLogger(PrometheusMetrics.class);
 
-    public PrometheusMetrics(ApplicationContext context, AudioPlayerManager playerManager) {
+    public PrometheusMetrics(ApplicationContext context,
+                             AudioPlayerManager playerManager,
+                             Optional<AbstractRoutePlanner> routePlanner) {
 
         InstrumentedAppender prometheusAppender = new InstrumentedAppender();
         //log metrics
@@ -41,6 +45,9 @@ public class PrometheusMetrics {
 
         // node-related metrics
         new NodeInfoExports(context).register();
+
+        // Route Planner exports
+        routePlanner.ifPresent(e -> new RoutePlannerExports(e).register());
 
         //gc pause buckets
         final GcNotificationListener gcNotificationListener = new GcNotificationListener();
