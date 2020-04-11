@@ -16,7 +16,8 @@ class CachedYouTubeAudioSourceManager(allowSearch: Boolean,
         YouTubeApiSearchProvider(youTubeService, cacheConfig),
         YoutubeSignatureCipherManager(),
         YouTubeApiPlaylistLoader(youTubeService, cacheService, cacheConfig),
-        DefaultYoutubeLinkRouter()
+        DefaultYoutubeLinkRouter(),
+        YoutubeMixProvider()
 ) {
 
     companion object {
