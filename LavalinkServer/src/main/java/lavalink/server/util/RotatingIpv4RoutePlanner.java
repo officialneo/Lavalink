@@ -107,13 +107,23 @@ public class RotatingIpv4RoutePlanner extends AbstractRoutePlanner {
         InetAddress localAddress;
         do {
             int position = index.get().intValue();
-            if (position >= ipBlocks.size()) {
-                index.set(BigInteger.ZERO);
+            if (ipBlocks.size() > 1) {
+                if (position >= (ipBlocks.size() - 1)) {
+                    index.set(BigInteger.ZERO);
+                    throw new RuntimeException("Can't find a free ip");
+                }
+                position = index.accumulateAndGet(BigInteger.ONE, BigInteger::add).intValue();
+            }
+            localAddress = ipBlocks.get(position).getAddressAtIndex(0);
+
+            if (ipBlocks.size() == 1 && isUnavailableAddress(localAddress)) {
                 throw new RuntimeException("Can't find a free ip");
             }
-            index.accumulateAndGet(BigInteger.ONE, BigInteger::add);
-            localAddress = ipBlocks.get(position).getAddressAtIndex(0);
-        } while (localAddress == null || !ipFilter.test(localAddress) || !isValidAddress(localAddress));
+        } while (isUnavailableAddress(localAddress));
         return localAddress;
+    }
+
+    private boolean isUnavailableAddress(InetAddress address) {
+        return address == null || !ipFilter.test(address) || !isValidAddress(address);
     }
 }
