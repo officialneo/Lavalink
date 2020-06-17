@@ -18,11 +18,14 @@ import lavalink.server.cache.CacheConfig
 import lavalink.server.cache.CacheService
 import lavalink.server.cache.CachedYouTubeAudioSourceManager
 import lavalink.server.cache.YouTubeService
+import lavalink.server.extensions.yandex.YandexIpRotatorSetup
 import lavalink.server.util.RotatingIpv4RoutePlanner
 import org.apache.http.HttpHost
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import java.net.InetAddress
 import java.util.function.Predicate
 
@@ -34,13 +37,18 @@ class AudioPlayerConfiguration {
 
     private val log = LoggerFactory.getLogger(AudioPlayerConfiguration::class.java)
 
+    companion object {
+        const val YANDEX_ROUTE_PLANNER = "yandex"
+    }
+
     @Bean
     fun audioPlayerManagerSupplier(sources: AudioSourcesConfig,
                                    serverConfig: ServerConfig,
                                    cacheConfig: CacheConfig,
                                    cacheService: CacheService,
                                    youTubeService: YouTubeService,
-                                   routePlanner: AbstractRoutePlanner?): AudioPlayerManager {
+                                   routePlanner: AbstractRoutePlanner?,
+                                   @Qualifier(YANDEX_ROUTE_PLANNER) yandexRoutePlanner: AbstractRoutePlanner?): AudioPlayerManager {
         val audioPlayerManager = DefaultAudioPlayerManager()
 
         if (serverConfig.isGcWarnings) {
@@ -87,11 +95,22 @@ class AudioPlayerConfiguration {
 
         val yandex = sources.yandex
         if (yandex.isEnabled) {
-            val sourceManager = YandexMusicAudioSourceManager()
+            val yandexSourceManager = YandexMusicAudioSourceManager()
             if (yandex.proxyHost.isNotBlank()) {
-                sourceManager.configureApiBuilder { builder -> builder.setProxy(HttpHost(yandex.proxyHost, yandex.proxyPort)) }
+                yandexSourceManager.configureBuilder { builder -> builder.setProxy(HttpHost(yandex.proxyHost, yandex.proxyPort)) }
             }
-            audioPlayerManager.registerSourceManager(sourceManager)
+            yandexRoutePlanner?.let { it ->
+                var retryLimit = sources.yandex.ratelimit?.retryLimit ?: -1
+                if (retryLimit == 0) {
+                    retryLimit = Int.MAX_VALUE
+                }
+                val builder = YandexIpRotatorSetup(it).forSource(yandexSourceManager)
+                if (retryLimit > 0) {
+                    builder.withRetryLimit(retryLimit)
+                }
+                builder.setup()
+            }
+            audioPlayerManager.registerSourceManager(yandexSourceManager)
         }
         if (sources.isHttp) audioPlayerManager.registerSourceManager(HttpAudioSourceManager())
         if (sources.isLocal) audioPlayerManager.registerSourceManager(LocalAudioSourceManager())
@@ -102,15 +121,25 @@ class AudioPlayerConfiguration {
     }
 
     @Bean
+    @Primary
     fun routePlanner(serverConfig: ServerConfig): AbstractRoutePlanner? {
-        val rateLimitConfig = serverConfig.ratelimit
+        return getRoutePlanner(serverConfig.ratelimit, "primary")
+    }
+
+    @Bean
+    @Qualifier(YANDEX_ROUTE_PLANNER)
+    fun yandexRoutePlanner(audioSourcesConfig: AudioSourcesConfig): AbstractRoutePlanner? {
+        return getRoutePlanner(audioSourcesConfig.yandex.ratelimit, "yandex")
+    }
+
+    private fun getRoutePlanner(rateLimitConfig: RateLimitConfig?, name: String): AbstractRoutePlanner? {
         if (rateLimitConfig == null) {
-            log.debug("No rate limit config block found, skipping setup of route planner")
+            log.debug("No $name rate limit config block found, skipping setup of route planner")
             return null
         }
         val ipBlockList = rateLimitConfig.ipBlocks
         if (ipBlockList.isEmpty()) {
-            log.info("List of ip blocks is empty, skipping setup of route planner")
+            log.info("List of ip blocks is empty, skipping setup of $name route planner")
             return null
         }
 
@@ -122,7 +151,7 @@ class AudioPlayerConfiguration {
             when {
                 Ipv4Block.isIpv4CidrBlock(it) -> Ipv4Block(it)
                 Ipv6Block.isIpv6CidrBlock(it) -> Ipv6Block(it)
-                else -> throw RuntimeException("Invalid IP Block '$it', make sure to provide a valid CIDR notation")
+                else -> throw RuntimeException("Invalid IP Block '$it' for $name, make sure to provide a valid CIDR notation")
             }
         }
 
@@ -135,5 +164,4 @@ class AudioPlayerConfiguration {
             else -> throw RuntimeException("Unknown strategy!")
         }
     }
-
 }
