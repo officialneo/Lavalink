@@ -31,7 +31,10 @@ public class YandexIpRotatorSetup {
   }
 
   public YandexIpRotatorSetup forSource(YandexMusicAudioSourceManager sourceManager) {
-    forConfiguration(sourceManager.getHttpConfiguration());
+    forConfiguration(sourceManager.getSearchHttpConfiguration());
+    forConfiguration(sourceManager.getPlaylistLHttpConfiguration());
+    forConfiguration(sourceManager.getTrackLHttpConfiguration());
+    forConfiguration(sourceManager.getDirectUrlLHttpConfiguration());
     return this;
   }
 
