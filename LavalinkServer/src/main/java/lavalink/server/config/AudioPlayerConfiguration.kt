@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.*
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager
+import com.sedmelluq.discord.lavaplayer.source.yamusic.YandexHttpContextFilter
 import com.sedmelluq.discord.lavaplayer.source.yamusic.YandexMusicAudioSourceManager
 import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup
 import com.sedmelluq.lava.extensions.youtuberotator.planner.*
@@ -98,6 +99,9 @@ class AudioPlayerConfiguration {
             val yandexSourceManager = YandexMusicAudioSourceManager()
             if (yandex.proxyHost.isNotBlank()) {
                 yandexSourceManager.configureBuilder { builder -> builder.setProxy(HttpHost(yandex.proxyHost, yandex.proxyPort)) }
+            }
+            if (yandex.token.isNotBlank()) {
+                YandexHttpContextFilter.setOAuthToken(yandex.token)
             }
             yandexRoutePlanner?.let { it ->
                 var retryLimit = sources.yandex.ratelimit?.retryLimit ?: -1
