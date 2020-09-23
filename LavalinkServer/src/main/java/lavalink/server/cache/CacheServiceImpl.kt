@@ -54,7 +54,10 @@ class CacheServiceImpl : CacheService {
         return convertTrackInfo(response.track, info)
     }
 
-    private fun convertTrackInfo(track: Track, trackInfo: AudioTrackInfo): AudioTrackInfo {
+    private fun convertTrackInfo(track: Track, trackInfo: AudioTrackInfo): AudioTrackInfo? {
+        if (!isValidInfo(trackInfo)) {
+            return null
+        }
         if (track is YoutubeTrack) {
             trackInfo.metadata["artworkUrl"] = "https://img.youtube.com/vi/${trackInfo.identifier}/0.jpg"
         }
@@ -68,6 +71,8 @@ class CacheServiceImpl : CacheService {
         return null
     }
 
+    private fun isValidInfo(trackInfo: AudioTrackInfo) = trackInfo.title != null && trackInfo.author != null
+
     override fun get(id: String) = if (client != null) client!![id] else null
 
     override fun addToIndex(playlist: AudioPlaylist) {
@@ -77,7 +82,7 @@ class CacheServiceImpl : CacheService {
     }
 
     override fun addToIndex(track: AudioTrack) {
-        if (client != null && track !is CachedYouTubeAudioTrack) {
+        if (client != null && track !is CachedYouTubeAudioTrack && isValidInfo(track.info)) {
             client!!.addToIndex(track)
         }
     }
