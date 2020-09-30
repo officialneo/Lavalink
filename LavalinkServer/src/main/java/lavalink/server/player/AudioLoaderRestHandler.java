@@ -23,6 +23,9 @@
 package lavalink.server.player;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeChannel;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeChannelLoader;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.server.cache.CacheService;
@@ -44,6 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 @RestController
@@ -53,6 +57,7 @@ public class AudioLoaderRestHandler {
     private final AudioPlayerManager audioPlayerManager;
     private final ServerConfig serverConfig;
     private final CacheService cacheService;
+    private final YoutubeChannelLoader channelLoader;
 
     public AudioLoaderRestHandler(AudioPlayerManager audioPlayerManager,
                                   ServerConfig serverConfig,
@@ -60,6 +65,9 @@ public class AudioLoaderRestHandler {
         this.audioPlayerManager = audioPlayerManager;
         this.serverConfig = serverConfig;
         this.cacheService = cacheService;
+
+        var youtubeSourceManager = this.audioPlayerManager.source(YoutubeAudioSourceManager.class);
+        this.channelLoader = youtubeSourceManager != null ? youtubeSourceManager.getChannelLoader() : null;
     }
 
     private void log(HttpServletRequest request) {
@@ -133,6 +141,19 @@ public class AudioLoaderRestHandler {
         return new AudioLoader(audioPlayerManager, cacheService).load(identifier)
                 .thenApply(this::encodeLoadResult)
                 .thenApply(loadResultJson -> new ResponseEntity<>(loadResultJson.toString(), HttpStatus.OK));
+    }
+
+    @GetMapping(value = "/searchchannels", produces = "application/json")
+    @ResponseBody
+    public ResponseEntity<List<YoutubeChannel>> searchChannels(HttpServletRequest request,
+                                                                 @RequestParam String query) {
+        log(request);
+
+        if (channelLoader == null) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(channelLoader.loadSearchResult(query));
     }
 
     @GetMapping(value = "/decodetrack", produces = "application/json")
