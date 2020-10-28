@@ -4,6 +4,8 @@ Allows for sending audio without it ever reaching any of your shards.
 
 Being used in production by FredBoat, Dyno, LewdBot, and more.
 
+A [very simple example bot](Testbot) is available.
+
 [![JDA guild](https://discordapp.com/api/guilds/125227483518861312/embed.png?style=banner2)](https://discord.gg/jtAWrzU)
 
 ## Features
@@ -68,17 +70,17 @@ users about the compatibility of their clients to the Lavalink server.
 
 
 ## Client libraries:
-### Supports 3.x and older:
 * [Lavalink-Client](https://github.com/FredBoat/Lavalink-Client) (JDA or generic, Java)
 * [LavaClient](https://github.com/SamOphis/LavaClient) (Java)
 * [Lavalink.py](https://github.com/Devoxin/Lavalink.py) (discord.py, Python)
 * [pylava](https://github.com/Pandentia/pylava) (discord.py, Python)
+* [playlink](https://github.com/OverleapCo/Playlink) (Javascript/Typescript)
 * [SandySounds](https://github.com/MrJohnCoder/SandySounds) (JavaScript)
 * [eris-lavalink](https://github.com/briantanner/eris-lavalink) ([eris](https://github.com/abalabahaha/eris), JavaScript)
 * [LavaClient](https://github.com/lavaclient/lavaclient) (JavaScript)
 * [Shoukaku](https://github.com/Deivu/Shoukaku) ([discord.js](https://github.com/discordjs/discord.js), JavaScript)
 * [Lavacord](https://github.com/lavacord/lavacord) (JavaScript)
-* [LavaJS](https://github.com/Projects-Me/LavaJS) ([discord.js](https://github.com/discordjs/discord.js), JavaScript/TypeScript)
+* [LavaJS](https://github.com/Overleap/LavaJS) ([discord.js](https://github.com/discordjs/discord.js), JavaScript/TypeScript)
 * [EvoLava](https://github.com/EvolveJS/EvoLava) ([EvolveJS](https://github.com/EvolveJS/EvolveJS), Javascript/Typescript)
 * [SharpLink](https://github.com/Devoxin/SharpLink) ([Discord.Net](https://github.com/RogueException/Discord.Net), .NET)
 * [Victoria](https://github.com/Yucked/Victoria) ([Discord.NET](https://github.com/RogueException/Discord.Net), .NET)
@@ -92,10 +94,6 @@ users about the compatibility of their clients to the Lavalink server.
 * [Lavalink-rs](https://gitlab.com/nitsuga5124/lavalink-rs/) (Async Libraries, Rust)
 * Or [create your own](https://github.com/Frederikam/Lavalink/blob/master/IMPLEMENTATION.md)
 
-### Supports 2.x:
-* [eris-lavalink](https://github.com/briantanner/eris-lavalink) (Eris, JavaScript)
-* Or [create your own](https://github.com/Frederikam/Lavalink/blob/master/IMPLEMENTATION.md)
-
 ## Server configuration
 Download binaries from [the CI server](https://ci.fredboat.com/viewLog.html?buildId=lastSuccessful&buildTypeId=Lavalink_Build&tab=artifacts&guest=1) or [the GitHub releases](https://github.com/Frederikam/Lavalink/releases).
 
@@ -106,6 +104,3 @@ Run with `java -jar Lavalink.jar`
 Docker images are available on the [Docker hub](https://hub.docker.com/r/fredboat/lavalink/).
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/fredboat/lavalink.svg)](https://hub.docker.com/r/fredboat/lavalink/) [![Docker layers](https://images.microbadger.com/badges/image/fredboat/lavalink:dev.svg)](https://microbadger.com/images/fredboat/lavalink:dev "Get your own image badge on microbadger.com")
-
-# Acknowledgements
-This project contains modified code from https://github.com/sedmelluq/jda-nas v1.0.5

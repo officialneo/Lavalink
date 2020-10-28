@@ -9,10 +9,13 @@ import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.soundcloud.*
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager
-import com.sedmelluq.discord.lavaplayer.source.yamusic.YandexHttpContextFilter
-import com.sedmelluq.discord.lavaplayer.source.yamusic.YandexMusicAudioSourceManager
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup
-import com.sedmelluq.lava.extensions.youtuberotator.planner.*
+import com.sedmelluq.lava.extensions.youtuberotator.planner.AbstractRoutePlanner
+import com.sedmelluq.lava.extensions.youtuberotator.planner.BalancingIpRoutePlanner
+import com.sedmelluq.lava.extensions.youtuberotator.planner.NanoIpRoutePlanner
+import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingIpRoutePlanner
+import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingNanoIpRoutePlanner
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv4Block
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv6Block
 import lavalink.server.cache.CacheConfig

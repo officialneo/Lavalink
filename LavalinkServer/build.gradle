@@ -34,7 +34,11 @@ bootRun {
 }
 
 dependencies {
-    compile group: 'space.npstr.Magma', name: 'magma', version: magmaVersion
+    compile (group: 'moe.kyokobot.koe', name: 'core', version: koeVersion) {
+        // This version of SLF4J does not recognise Logback 1.2.3
+        exclude group: "org.slf4j", module: "slf4j-api"
+    }
+    compile group: 'moe.kyokobot.koe', name: 'ext-udpqueue', version: koeVersion
     //compile group: 'com.sedmelluq', name: 'lavaplayer', version: lavaplayerVersion
     compile group: 'org.goldrenard', name: 'lavaplayer', version: jbLavaplayerVersion
     compile (group: 'com.sedmelluq', name: 'lavaplayer-ext-youtube-rotator', version: lavaplayerIpRotatorVersion) {
@@ -46,9 +50,6 @@ dependencies {
     compile group: 'com.google.apis', name: 'google-api-services-youtube', version: youTubeApiVersion
     compile group: "net.notfab.cache", name: 'cache-client', version: cacheVersion
     compile group: 'com.squareup.okhttp3', name: 'okhttp', version: okhttp3Version
-    compile group: 'com.github.shredder121', name: 'jda-async-packetprovider', version: jappVersion
-    //required by japp
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: commonsLangVersion
     compile group: 'org.springframework', name: 'spring-websocket', version: springWebSocketVersion
     compile group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
     compile group: 'io.sentry', name: 'sentry-logback', version: sentryLogbackVersion

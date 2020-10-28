@@ -126,6 +126,7 @@ public class AudioLoaderRestHandler {
             exception.put("severity", result.exception.severity.toString());
 
             json.put("exception", exception);
+            log.error("Track loading failed", result.exception);
         }
 
         return json;
@@ -133,10 +134,10 @@ public class AudioLoaderRestHandler {
 
     @GetMapping(value = "/loadtracks", produces = "application/json")
     @ResponseBody
-    public CompletionStage<ResponseEntity<String>> getLoadTracks(HttpServletRequest request,
-                                                                 @RequestParam String identifier) {
-
-        log(request);
+    public CompletionStage<ResponseEntity<String>> getLoadTracks(
+            HttpServletRequest request,
+            @RequestParam String identifier) {
+        log.info("Got request to load for identifier \"{}\"", identifier);
 
         return new AudioLoader(audioPlayerManager, cacheService).load(identifier)
                 .thenApply(this::encodeLoadResult)
