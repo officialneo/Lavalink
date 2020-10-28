@@ -50,6 +50,7 @@ dependencies {
     compile group: 'com.google.apis', name: 'google-api-services-youtube', version: youTubeApiVersion
     compile group: "net.notfab.cache", name: 'cache-client', version: cacheVersion
     compile group: 'com.squareup.okhttp3', name: 'okhttp', version: okhttp3Version
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: commonsLangVersion
     compile group: 'org.springframework', name: 'spring-websocket', version: springWebSocketVersion
     compile group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
     compile group: 'io.sentry', name: 'sentry-logback', version: sentryLogbackVersion
